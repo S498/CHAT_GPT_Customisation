@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ask DMV GPT</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: sans-serif;
+			background-color: #f0f0f0;
+		}
+
+		.container {
+			width: 80%;
+			margin: 0 auto;
+			padding: 2rem;
+			background-color: white;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			border-radius: 8px;
+			text-align: center;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 0.5rem;
+			font-weight: bold;
+		}
+
+		input[type="text"] {
+			width: 100%;
+			padding: 0.5rem;
+			border: none;
+			border-radius: 4px;
+			box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+			font-size: 1rem;
+			outline: none;
+		}
+
+		button {
+			margin-top: 1rem;
+			padding: 0.5rem 1rem;
+			border: none;
+			border-radius: 4px;
+			background-color: #0077cc;
+			color: white;
+			font-size: 1rem;
+			font-weight: bold;
+			cursor: pointer;
+			transition: background-color 0.2s;
+			animation: none;
+		}
+
+		button:hover {
+			background-color: #005299;
+		}
+
+		button.blinking {
+			animation: blink 1s ease-in-out infinite;
+		}
+
+		@keyframes blink {
+			50% {
+				opacity: 0.5;
+			}
+		}
+
+		#response {
+			margin-top: 1rem;
+			padding: 1rem;
+			background-color: #f5f5f5;
+			border-radius: 4px;
+			white-space: pre-wrap;
+			word-wrap: break-word;
+			text-align: left;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<label for="prompt-input">Enter Your Query:</label>
+		<input type="text" id="prompt-input" name="prompt">
+		<button id="ask-gpt-button">Ask DMV GPT</button>
+		<div id="response"></div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="../static/app.js"></script>
+	<script>
+		const promptInput = document.getElementById("prompt-input");
+		const askGptButton = document.getElementById("ask-gpt-button");
+		const response = document.getElementById("response");
+
+		askGptButton.addEventListener("click", async () => {
+			const prompt = promptInput.value;
+			if (prompt.trim() === "") {
+				return;
+			}
+
+			askGptButton.classList.add("blinking");
+
+			try {
+				const { data } = await axios.post("/ask", { prompt });
+				response.innerText = data.response;
+			} catch (error) {
+				console.error(error);
+				response.innerText = "An error occurred while making the request.";
+			} finally {
+				askGptButton.classList.remove("blinking");
+			}
+		});
+	</script>
+</body>
+</html>
